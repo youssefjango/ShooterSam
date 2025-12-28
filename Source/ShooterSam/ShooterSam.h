@@ -5,4 +5,4 @@
 #include "CoreMinimal.h"
 
 /** Main log category used across the project */
-DECLARE_LOG_CATEGORY_EXTERN(LogShooterSamFinal, Log, All);
+DECLARE_LOG_CATEGORY_EXTERN(LogShooterSam, Log, All);

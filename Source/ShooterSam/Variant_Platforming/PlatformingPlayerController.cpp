@@ -1,19 +1,19 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 
-#include "Variant_Combat/CombatPlayerController.h"
+#include "Variant_Platforming/PlatformingPlayerController.h"
 #include "EnhancedInputSubsystems.h"
 #include "InputMappingContext.h"
 #include "Kismet/GameplayStatics.h"
 #include "GameFramework/PlayerStart.h"
-#include "CombatCharacter.h"
+#include "PlatformingCharacter.h"
 #include "Engine/LocalPlayer.h"
 #include "Engine/World.h"
 #include "Blueprint/UserWidget.h"
-#include "ShooterSamFinal.h"
+#include "ShooterSam.h"
 #include "Widgets/Input/SVirtualJoystick.h"
 
-void ACombatPlayerController::BeginPlay()
+void APlatformingPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
 
@@ -30,14 +30,14 @@ void ACombatPlayerController::BeginPlay()
 
 		} else {
 
-			UE_LOG(LogShooterSamFinal, Error, TEXT("Could not spawn mobile controls widget."));
+			UE_LOG(LogShooterSam, Error, TEXT("Could not spawn mobile controls widget."));
 
 		}
 
 	}
 }
 
-void ACombatPlayerController::SetupInputComponent()
+void APlatformingPlayerController::SetupInputComponent()
 {
 	// only add IMCs for local player controllers
 	if (IsLocalPlayerController())
@@ -62,26 +62,29 @@ void ACombatPlayerController::SetupInputComponent()
 	}
 }
 
-void ACombatPlayerController::OnPossess(APawn* InPawn)
+void APlatformingPlayerController::OnPossess(APawn* InPawn)
 {
 	Super::OnPossess(InPawn);
 
 	// subscribe to the pawn's OnDestroyed delegate
-	InPawn->OnDestroyed.AddDynamic(this, &ACombatPlayerController::OnPawnDestroyed);
+	InPawn->OnDestroyed.AddDynamic(this, &APlatformingPlayerController::OnPawnDestroyed);
 }
 
-void ACombatPlayerController::SetRespawnTransform(const FTransform& NewRespawn)
+void APlatformingPlayerController::OnPawnDestroyed(AActor* DestroyedActor)
 {
-	// save the new respawn transform
-	RespawnTransform = NewRespawn;
-}
+	// find the player start
+	TArray<AActor*> ActorList;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayerStart::StaticClass(), ActorList);
 
-void ACombatPlayerController::OnPawnDestroyed(AActor* DestroyedActor)
-{
-	// spawn a new character at the respawn transform
-	if (ACombatCharacter* RespawnedCharacter = GetWorld()->SpawnActor<ACombatCharacter>(CharacterClass, RespawnTransform))
+	if (ActorList.Num() > 0)
 	{
-		// possess the character
-		Possess(RespawnedCharacter);
+		// spawn a character at the player start
+		const FTransform SpawnTransform = ActorList[0]->GetActorTransform();
+
+		if (APlatformingCharacter* RespawnedCharacter = GetWorld()->SpawnActor<APlatformingCharacter>(CharacterClass, SpawnTransform))
+		{
+			// possess the character
+			Possess(RespawnedCharacter);
+		}
 	}
 }

@@ -1,19 +1,15 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 
-#include "Variant_Platforming/PlatformingPlayerController.h"
+#include "ShooterSamPlayerController.h"
 #include "EnhancedInputSubsystems.h"
-#include "InputMappingContext.h"
-#include "Kismet/GameplayStatics.h"
-#include "GameFramework/PlayerStart.h"
-#include "PlatformingCharacter.h"
 #include "Engine/LocalPlayer.h"
-#include "Engine/World.h"
+#include "InputMappingContext.h"
 #include "Blueprint/UserWidget.h"
-#include "ShooterSamFinal.h"
+#include "ShooterSam.h"
 #include "Widgets/Input/SVirtualJoystick.h"
 
-void APlatformingPlayerController::BeginPlay()
+void AShooterSamPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
 
@@ -30,19 +26,21 @@ void APlatformingPlayerController::BeginPlay()
 
 		} else {
 
-			UE_LOG(LogShooterSamFinal, Error, TEXT("Could not spawn mobile controls widget."));
+			UE_LOG(LogShooterSam, Error, TEXT("Could not spawn mobile controls widget."));
 
 		}
 
 	}
 }
 
-void APlatformingPlayerController::SetupInputComponent()
+void AShooterSamPlayerController::SetupInputComponent()
 {
+	Super::SetupInputComponent();
+
 	// only add IMCs for local player controllers
 	if (IsLocalPlayerController())
 	{
-		// add the input mapping context
+		// Add Input Mapping Contexts
 		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer()))
 		{
 			for (UInputMappingContext* CurrentContext : DefaultMappingContexts)
@@ -58,33 +56,6 @@ void APlatformingPlayerController::SetupInputComponent()
 					Subsystem->AddMappingContext(CurrentContext, 0);
 				}
 			}
-		}
-	}
-}
-
-void APlatformingPlayerController::OnPossess(APawn* InPawn)
-{
-	Super::OnPossess(InPawn);
-
-	// subscribe to the pawn's OnDestroyed delegate
-	InPawn->OnDestroyed.AddDynamic(this, &APlatformingPlayerController::OnPawnDestroyed);
-}
-
-void APlatformingPlayerController::OnPawnDestroyed(AActor* DestroyedActor)
-{
-	// find the player start
-	TArray<AActor*> ActorList;
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayerStart::StaticClass(), ActorList);
-
-	if (ActorList.Num() > 0)
-	{
-		// spawn a character at the player start
-		const FTransform SpawnTransform = ActorList[0]->GetActorTransform();
-
-		if (APlatformingCharacter* RespawnedCharacter = GetWorld()->SpawnActor<APlatformingCharacter>(CharacterClass, SpawnTransform))
-		{
-			// possess the character
-			Possess(RespawnedCharacter);
 		}
 	}
 }

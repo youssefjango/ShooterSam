@@ -4,20 +4,20 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"
-#include "ShooterSamFinalGameMode.generated.h"
+#include "ShooterSamGameMode.generated.h"
 
 /**
  *  Simple GameMode for a third person game
  */
 UCLASS(abstract)
-class AShooterSamFinalGameMode : public AGameModeBase
+class AShooterSamGameMode : public AGameModeBase
 {
 	GENERATED_BODY()
 
 public:
 	
 	/** Constructor */
-	AShooterSamFinalGameMode();
+	AShooterSamGameMode();
 };
 
 

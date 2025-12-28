@@ -1,19 +1,19 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 
-#include "SideScrollingPlayerController.h"
+#include "Variant_Combat/CombatPlayerController.h"
 #include "EnhancedInputSubsystems.h"
 #include "InputMappingContext.h"
 #include "Kismet/GameplayStatics.h"
 #include "GameFramework/PlayerStart.h"
-#include "SideScrollingCharacter.h"
+#include "CombatCharacter.h"
 #include "Engine/LocalPlayer.h"
 #include "Engine/World.h"
 #include "Blueprint/UserWidget.h"
-#include "ShooterSamFinal.h"
+#include "ShooterSam.h"
 #include "Widgets/Input/SVirtualJoystick.h"
 
-void ASideScrollingPlayerController::BeginPlay()
+void ACombatPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
 
@@ -30,14 +30,14 @@ void ASideScrollingPlayerController::BeginPlay()
 
 		} else {
 
-			UE_LOG(LogShooterSamFinal, Error, TEXT("Could not spawn mobile controls widget."));
+			UE_LOG(LogShooterSam, Error, TEXT("Could not spawn mobile controls widget."));
 
 		}
 
 	}
 }
 
-void ASideScrollingPlayerController::SetupInputComponent()
+void ACombatPlayerController::SetupInputComponent()
 {
 	// only add IMCs for local player controllers
 	if (IsLocalPlayerController())
@@ -62,29 +62,26 @@ void ASideScrollingPlayerController::SetupInputComponent()
 	}
 }
 
-void ASideScrollingPlayerController::OnPossess(APawn* InPawn)
+void ACombatPlayerController::OnPossess(APawn* InPawn)
 {
 	Super::OnPossess(InPawn);
 
 	// subscribe to the pawn's OnDestroyed delegate
-	InPawn->OnDestroyed.AddDynamic(this, &ASideScrollingPlayerController::OnPawnDestroyed);
+	InPawn->OnDestroyed.AddDynamic(this, &ACombatPlayerController::OnPawnDestroyed);
 }
 
-void ASideScrollingPlayerController::OnPawnDestroyed(AActor* DestroyedActor)
+void ACombatPlayerController::SetRespawnTransform(const FTransform& NewRespawn)
 {
-	// find the player start
-	TArray<AActor*> ActorList;
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayerStart::StaticClass(), ActorList);
+	// save the new respawn transform
+	RespawnTransform = NewRespawn;
+}
 
-	if (ActorList.Num() > 0)
+void ACombatPlayerController::OnPawnDestroyed(AActor* DestroyedActor)
+{
+	// spawn a new character at the respawn transform
+	if (ACombatCharacter* RespawnedCharacter = GetWorld()->SpawnActor<ACombatCharacter>(CharacterClass, RespawnTransform))
 	{
-		// spawn a character at the player start
-		const FTransform SpawnTransform = ActorList[0]->GetActorTransform();
-
-		if (ASideScrollingCharacter* RespawnedCharacter = GetWorld()->SpawnActor<ASideScrollingCharacter>(CharacterClass, SpawnTransform))
-		{
-			// possess the character
-			Possess(RespawnedCharacter);
-		}
+		// possess the character
+		Possess(RespawnedCharacter);
 	}
 }

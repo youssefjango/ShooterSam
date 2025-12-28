@@ -1,6 +1,6 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
-#include "ShooterSamFinalCharacter.h"
+#include "ShooterSamCharacter.h"
 #include "Engine/LocalPlayer.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
@@ -10,9 +10,9 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "InputActionValue.h"
-#include "ShooterSamFinal.h"
+#include "ShooterSam.h"
 
-AShooterSamFinalCharacter::AShooterSamFinalCharacter()
+AShooterSamCharacter::AShooterSamCharacter()
 {
 	// Set size for collision capsule
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
@@ -50,7 +50,7 @@ AShooterSamFinalCharacter::AShooterSamFinalCharacter()
 	// are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
 }
 
-void AShooterSamFinalCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
+void AShooterSamCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	// Set up action bindings
 	if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent)) {
@@ -60,19 +60,19 @@ void AShooterSamFinalCharacter::SetupPlayerInputComponent(UInputComponent* Playe
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &ACharacter::StopJumping);
 
 		// Moving
-		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AShooterSamFinalCharacter::Move);
-		EnhancedInputComponent->BindAction(MouseLookAction, ETriggerEvent::Triggered, this, &AShooterSamFinalCharacter::Look);
+		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AShooterSamCharacter::Move);
+		EnhancedInputComponent->BindAction(MouseLookAction, ETriggerEvent::Triggered, this, &AShooterSamCharacter::Look);
 
 		// Looking
-		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &AShooterSamFinalCharacter::Look);
+		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &AShooterSamCharacter::Look);
 	}
 	else
 	{
-		UE_LOG(LogShooterSamFinal, Error, TEXT("'%s' Failed to find an Enhanced Input component! This template is built to use the Enhanced Input system. If you intend to use the legacy system, then you will need to update this C++ file."), *GetNameSafe(this));
+		UE_LOG(LogShooterSam, Error, TEXT("'%s' Failed to find an Enhanced Input component! This template is built to use the Enhanced Input system. If you intend to use the legacy system, then you will need to update this C++ file."), *GetNameSafe(this));
 	}
 }
 
-void AShooterSamFinalCharacter::Move(const FInputActionValue& Value)
+void AShooterSamCharacter::Move(const FInputActionValue& Value)
 {
 	// input is a Vector2D
 	FVector2D MovementVector = Value.Get<FVector2D>();
@@ -81,7 +81,7 @@ void AShooterSamFinalCharacter::Move(const FInputActionValue& Value)
 	DoMove(MovementVector.X, MovementVector.Y);
 }
 
-void AShooterSamFinalCharacter::Look(const FInputActionValue& Value)
+void AShooterSamCharacter::Look(const FInputActionValue& Value)
 {
 	// input is a Vector2D
 	FVector2D LookAxisVector = Value.Get<FVector2D>();
@@ -90,7 +90,7 @@ void AShooterSamFinalCharacter::Look(const FInputActionValue& Value)
 	DoLook(LookAxisVector.X, LookAxisVector.Y);
 }
 
-void AShooterSamFinalCharacter::DoMove(float Right, float Forward)
+void AShooterSamCharacter::DoMove(float Right, float Forward)
 {
 	if (GetController() != nullptr)
 	{
@@ -110,7 +110,7 @@ void AShooterSamFinalCharacter::DoMove(float Right, float Forward)
 	}
 }
 
-void AShooterSamFinalCharacter::DoLook(float Yaw, float Pitch)
+void AShooterSamCharacter::DoLook(float Yaw, float Pitch)
 {
 	if (GetController() != nullptr)
 	{
@@ -120,13 +120,13 @@ void AShooterSamFinalCharacter::DoLook(float Yaw, float Pitch)
 	}
 }
 
-void AShooterSamFinalCharacter::DoJumpStart()
+void AShooterSamCharacter::DoJumpStart()
 {
 	// signal the character to jump
 	Jump();
 }
 
-void AShooterSamFinalCharacter::DoJumpEnd()
+void AShooterSamCharacter::DoJumpEnd()
 {
 	// signal the character to stop jumping
 	StopJumping();

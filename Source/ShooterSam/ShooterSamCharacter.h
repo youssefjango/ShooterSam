@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "Logging/LogMacros.h"
-#include "ShooterSamFinalCharacter.generated.h"
+#include "ShooterSamCharacter.generated.h"
 
 class USpringArmComponent;
 class UCameraComponent;
@@ -19,7 +19,7 @@ DECLARE_LOG_CATEGORY_EXTERN(LogTemplateCharacter, Log, All);
  *  Implements a controllable orbiting camera
  */
 UCLASS(abstract)
-class AShooterSamFinalCharacter : public ACharacter
+class AShooterSamCharacter : public ACharacter
 {
 	GENERATED_BODY()
 
@@ -52,7 +52,7 @@ protected:
 public:
 
 	/** Constructor */
-	AShooterSamFinalCharacter();	
+	AShooterSamCharacter();	
 
 protected:
 

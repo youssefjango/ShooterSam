@@ -3,13 +3,13 @@
 using UnrealBuildTool;
 using System.Collections.Generic;
 
-public class ShooterSamFinalEditorTarget : TargetRules
+public class ShooterSamEditorTarget : TargetRules
 {
-	public ShooterSamFinalEditorTarget(TargetInfo Target) : base(Target)
+	public ShooterSamEditorTarget(TargetInfo Target) : base(Target)
 	{
 		Type = TargetType.Editor;
 		DefaultBuildSettings = BuildSettingsVersion.V5;
 		IncludeOrderVersion = EngineIncludeOrderVersion.Unreal5_6;
-		ExtraModuleNames.Add("ShooterSamFinal");
+		ExtraModuleNames.Add("ShooterSam");
 	}
 }

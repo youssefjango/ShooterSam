@@ -2,9 +2,9 @@
 
 using UnrealBuildTool;
 
-public class ShooterSamFinal : ModuleRules
+public class ShooterSam : ModuleRules
 {
-	public ShooterSamFinal(ReadOnlyTargetRules Target) : base(Target)
+	public ShooterSam(ReadOnlyTargetRules Target) : base(Target)
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 
@@ -24,20 +24,20 @@ public class ShooterSamFinal : ModuleRules
 		PrivateDependencyModuleNames.AddRange(new string[] { });
 
 		PublicIncludePaths.AddRange(new string[] {
-			"ShooterSamFinal",
-			"ShooterSamFinal/Variant_Platforming",
-			"ShooterSamFinal/Variant_Platforming/Animation",
-			"ShooterSamFinal/Variant_Combat",
-			"ShooterSamFinal/Variant_Combat/AI",
-			"ShooterSamFinal/Variant_Combat/Animation",
-			"ShooterSamFinal/Variant_Combat/Gameplay",
-			"ShooterSamFinal/Variant_Combat/Interfaces",
-			"ShooterSamFinal/Variant_Combat/UI",
-			"ShooterSamFinal/Variant_SideScrolling",
-			"ShooterSamFinal/Variant_SideScrolling/AI",
-			"ShooterSamFinal/Variant_SideScrolling/Gameplay",
-			"ShooterSamFinal/Variant_SideScrolling/Interfaces",
-			"ShooterSamFinal/Variant_SideScrolling/UI"
+			"ShooterSam",
+			"ShooterSam/Variant_Platforming",
+			"ShooterSam/Variant_Platforming/Animation",
+			"ShooterSam/Variant_Combat",
+			"ShooterSam/Variant_Combat/AI",
+			"ShooterSam/Variant_Combat/Animation",
+			"ShooterSam/Variant_Combat/Gameplay",
+			"ShooterSam/Variant_Combat/Interfaces",
+			"ShooterSam/Variant_Combat/UI",
+			"ShooterSam/Variant_SideScrolling",
+			"ShooterSam/Variant_SideScrolling/AI",
+			"ShooterSam/Variant_SideScrolling/Gameplay",
+			"ShooterSam/Variant_SideScrolling/Interfaces",
+			"ShooterSam/Variant_SideScrolling/UI"
 		});
 
 		// Uncomment if you are using Slate UI
