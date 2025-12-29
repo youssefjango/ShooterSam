@@ -14,6 +14,7 @@
 
 AShooterSamCharacter::AShooterSamCharacter()
 {
+	GetMesh()->HideBoneByName("weapon_r", EPhysBodyOp::PBO_None);
 	// Set size for collision capsule
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
 		
@@ -50,6 +51,17 @@ AShooterSamCharacter::AShooterSamCharacter()
 	// are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
 }
 
+void AShooterSamCharacter::BeginPlay()
+{
+	Super::BeginPlay();
+	
+	gunActor = GetWorld()->SpawnActor<AGun>(GunClass);
+	if (gunActor) {
+		gunActor->SetOwner(this);
+	}
+	gunActor->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, TEXT("WeaponSocket"));
+}
+
 void AShooterSamCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	// Set up action bindings
@@ -74,6 +86,7 @@ void AShooterSamCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInpu
 		UE_LOG(LogShooterSam, Error, TEXT("'%s' Failed to find an Enhanced Input component! This template is built to use the Enhanced Input system. If you intend to use the legacy system, then you will need to update this C++ file."), *GetNameSafe(this));
 	}
 }
+
 
 void AShooterSamCharacter::Move(const FInputActionValue& Value)
 {
@@ -137,5 +150,7 @@ void AShooterSamCharacter::DoJumpEnd()
 
 void AShooterSamCharacter::Shoot()
 {
-	//do shoot
+	if (gunActor) {
+		gunActor->PullTrigger();
+	}
 }
