@@ -55,6 +55,10 @@ void AShooterSamCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	OnTakeAnyDamage.AddDynamic(this, &AShooterSamCharacter::OnDamageTaken);
+	Health = MaxHealth;
+
+
 	gunActor = GetWorld()->SpawnActor<AGun>(GunClass);
 	if (gunActor) {
 		gunActor->SetOwner(this);
@@ -155,5 +159,17 @@ void AShooterSamCharacter::Shoot()
 {
 	if (gunActor) {
 		gunActor->PullTrigger();
+	}
+}
+
+void AShooterSamCharacter::OnDamageTaken(AActor* DamagedActor, float Damage, const UDamageType* DamageType, AController* InstigatedBy, AActor* DamageCauser)
+{
+	if (IsAlive) {
+		Health -= Damage;
+		if (Health <= 0.0f) {
+			Health = 0.0f;
+			IsAlive = false;
+			GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		}
 	}
 }

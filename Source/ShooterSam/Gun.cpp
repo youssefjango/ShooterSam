@@ -2,6 +2,9 @@
 
 
 #include "Gun.h"
+#include "Kismet/GameplayStatics.h"
+
+#define LOG_WARNING(x) UE_LOG(LogTemp, Warning, TEXT(x))
 
 // Sets default values
 AGun::AGun()
@@ -15,6 +18,9 @@ AGun::AGun()
 
 	mesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Mesh"));
 	mesh->SetupAttachment(GunRoot);
+
+	MuzzleFlashParticleSystem = CreateDefaultSubobject<UNiagaraComponent>(TEXT("Muzzle Flash Particle"));
+	MuzzleFlashParticleSystem->SetupAttachment(mesh);
 }
 
 // Called when the game starts or when spawned
@@ -22,6 +28,7 @@ void AGun::BeginPlay()
 {
 	Super::BeginPlay();
 
+	MuzzleFlashParticleSystem->Deactivate();
 	
 }
 
@@ -29,12 +36,12 @@ void AGun::BeginPlay()
 void AGun::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 }
 
 void AGun::PullTrigger()
 {
 	if (OwnerConroller) {
+		MuzzleFlashParticleSystem->Activate(true);
 		FVector location;
 		FRotator rotation;
 		OwnerConroller->GetPlayerViewPoint(location, rotation);
@@ -45,7 +52,16 @@ void AGun::PullTrigger()
 		params.AddIgnoredActor(GetOwner());
 		bool hasHit = GetWorld()->LineTraceSingleByChannel(hitRes, location, endLocation, ECC_GameTraceChannel2, params);
 		if (hasHit) {
-			DrawDebugSphere(GetWorld(), hitRes.ImpactPoint, 10.0f, 16, FColor::Red, true);
+			if (ImpactParticleSystem) {
+				UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), ImpactParticleSystem, hitRes.ImpactPoint, hitRes.ImpactPoint.Rotation());
+			}
+			else {
+				UE_LOG(LogTemp, Display, TEXT("Impact particle system is not instantiated in the editor."));
+			}
+			if (AActor* hitActor = Cast<AActor>(hitRes.GetActor())) {
+				UGameplayStatics::ApplyDamage(hitActor, BulletDamage
+					, OwnerConroller, this, UDamageType::StaticClass());
+			}
 		}
 	}
 }
