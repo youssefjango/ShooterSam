@@ -29,6 +29,12 @@ public:
 	UPROPERTY(EditAnywhere)
 	USkeletalMeshComponent* mesh;
 
+	UPROPERTY(EditAnywhere)
+	float MaxRange = 200.0f;
+
+	AController* OwnerConroller;
+
+
 	void PullTrigger();
 
 };

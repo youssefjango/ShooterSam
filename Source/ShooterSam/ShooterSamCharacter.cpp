@@ -58,8 +58,11 @@ void AShooterSamCharacter::BeginPlay()
 	gunActor = GetWorld()->SpawnActor<AGun>(GunClass);
 	if (gunActor) {
 		gunActor->SetOwner(this);
+		gunActor->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, TEXT("WeaponSocket"));
+		gunActor->OwnerConroller = GetController();
 	}
-	gunActor->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, TEXT("WeaponSocket"));
+	
+
 }
 
 void AShooterSamCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)

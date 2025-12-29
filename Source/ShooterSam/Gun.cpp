@@ -34,6 +34,19 @@ void AGun::Tick(float DeltaTime)
 
 void AGun::PullTrigger()
 {
-	//pulling trigger
+	if (OwnerConroller) {
+		FVector location;
+		FRotator rotation;
+		OwnerConroller->GetPlayerViewPoint(location, rotation);
+		FVector endLocation = location + MaxRange * rotation.Vector();
+		FHitResult hitRes;
+		FCollisionQueryParams params;
+		params.AddIgnoredActor(this);
+		params.AddIgnoredActor(GetOwner());
+		bool hasHit = GetWorld()->LineTraceSingleByChannel(hitRes, location, endLocation, ECC_GameTraceChannel2, params);
+		if (hasHit) {
+			DrawDebugSphere(GetWorld(), hitRes.ImpactPoint, 10.0f, 16, FColor::Red, true);
+		}
+	}
 }
 
