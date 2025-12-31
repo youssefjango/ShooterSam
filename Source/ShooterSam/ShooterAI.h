@@ -18,6 +18,8 @@ protected:
 	virtual void BeginPlay() override;
 public:
 	virtual void Tick(float DeltaTime) override;
-	APawn* PlayerPawn;
+	
+	UPROPERTY(EditAnywhere)
+	UBehaviorTree* EnemyAIBT;
 
 };

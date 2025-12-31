@@ -9,16 +9,16 @@ void AShooterAI::BeginPlay()
 {
 	Super::BeginPlay();
 
-	PlayerPawn = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
-	if (PlayerPawn) {
-		SetFocus(PlayerPawn);
+	if (EnemyAIBT) {
+		RunBehaviorTree(EnemyAIBT);
 	}
 }
 
 void AShooterAI::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	if (AShooterSamCharacter* CurrentCharacter = Cast<AShooterSamCharacter>(GetCharacter())) {
+
+	/*if (AShooterSamCharacter* CurrentCharacter = Cast<AShooterSamCharacter>(GetCharacter())) {
 		if (LineOfSightTo(PlayerPawn)) {
 			SetFocus(PlayerPawn);
 			MoveToActor(PlayerPawn, 200.0f);
@@ -28,7 +28,7 @@ void AShooterAI::Tick(float DeltaTime)
 			ClearFocus(EAIFocusPriority::Gameplay);
 			StopMovement();
 		}
-		
+	*/	
 		
 		
 		/*if (CurrentCharacter->gunActor) {
@@ -39,5 +39,4 @@ void AShooterAI::Tick(float DeltaTime)
 			MoveToActor(PlayerPawn, 200.0f);
 			UE_LOG(LogTemp, Display, TEXT("Gun not found"));
 		}*/
-	}
 }
