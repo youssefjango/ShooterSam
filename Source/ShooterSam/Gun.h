@@ -6,7 +6,6 @@
 #include "GameFramework/Actor.h"
 #include "NiagaraFunctionLibrary.h"
 #include "NiagaraComponent.h"
-
 #include "Gun.generated.h"
 
 UCLASS()
@@ -44,7 +43,10 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Particles Systems")
 	UNiagaraSystem* ImpactParticleSystem;
 
-
+	UPROPERTY(EditAnywhere, Category = "Sound Cues")
+	USoundBase* ShootSound;
+	UPROPERTY(EditAnywhere, Category = "Sound Cues")
+	USoundBase* ImpactSound;
 
 	void PullTrigger();
 
