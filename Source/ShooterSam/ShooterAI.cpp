@@ -4,14 +4,11 @@
 #include "ShooterAI.h"
 #include "ShooterSamCharacter.h"
 #include "Kismet/GameplayStatics.h"
+#include "BehaviorTree/BlackboardComponent.h"
 
 void AShooterAI::BeginPlay()
 {
 	Super::BeginPlay();
-
-	if (EnemyAIBT) {
-		RunBehaviorTree(EnemyAIBT);
-	}
 }
 
 void AShooterAI::Tick(float DeltaTime)
@@ -39,4 +36,22 @@ void AShooterAI::Tick(float DeltaTime)
 			MoveToActor(PlayerPawn, 200.0f);
 			UE_LOG(LogTemp, Display, TEXT("Gun not found"));
 		}*/
+}
+
+void AShooterAI::StartBehaviorTree(AShooterSamCharacter* PlayerCharacter)
+{
+	if (EnemyAIBT) {
+		ControlledCharacter = Cast<AShooterSamCharacter>(GetPawn());
+
+		if (PlayerCharacter) {
+			MainShooterCharacter = PlayerCharacter;
+		}
+		RunBehaviorTree(EnemyAIBT);
+
+		if (UBlackboardComponent* BB = GetBlackboardComponent()) {
+			if (MainShooterCharacter && ControlledCharacter) {
+				BB->SetValueAsVector("OriginalLocation", ControlledCharacter->GetActorLocation());
+			}
+		}
+	}
 }

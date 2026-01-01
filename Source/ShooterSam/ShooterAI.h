@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "AIController.h"
+#include "ShooterSamCharacter.h"
 #include "ShooterAI.generated.h"
 
 /**
@@ -21,5 +22,11 @@ public:
 	
 	UPROPERTY(EditAnywhere)
 	UBehaviorTree* EnemyAIBT;
+
+	AShooterSamCharacter* MainShooterCharacter;
+	
+	AShooterSamCharacter* ControlledCharacter;
+
+	void StartBehaviorTree(AShooterSamCharacter* Character);
 
 };
