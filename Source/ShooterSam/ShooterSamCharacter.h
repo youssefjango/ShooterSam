@@ -53,6 +53,9 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Input")
 	UInputAction* ShootAction;
 
+	UPROPERTY(EditAnywhere, Category = "Input")
+	UInputAction* AimAction;
+
 public:
 
 	/** Constructor */
@@ -111,12 +114,14 @@ public:
 	bool IsAlive = true;
 	
 	void Shoot();
-
+	void Aim();
+	void StopAim();
 
 	UFUNCTION()
 	void OnDamageTaken(AActor* DamagedActor, float Damage, const class UDamageType* DamageType, class AController* InstigatedBy, AActor* DamageCauser);
 	
 	void UpdateHUDHealthBar();
-
+private:
+	float DefaultArmLength;
 };
 

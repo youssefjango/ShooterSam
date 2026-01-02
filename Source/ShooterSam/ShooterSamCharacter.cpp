@@ -89,9 +89,14 @@ void AShooterSamCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInpu
 
 		// Shooting
 		EnhancedInputComponent->BindAction(ShootAction, ETriggerEvent::Started, this, &AShooterSamCharacter::Shoot);
+
+		//Aiming Start
+		EnhancedInputComponent->BindAction(AimAction, ETriggerEvent::Started, this, &AShooterSamCharacter::Aim);
+
+		//Aiming Release
+		EnhancedInputComponent->BindAction(AimAction, ETriggerEvent::Completed, this, &AShooterSamCharacter::StopAim);
 	}
-	else
-	{
+	else {
 		UE_LOG(LogShooterSam, Error, TEXT("'%s' Failed to find an Enhanced Input component! This template is built to use the Enhanced Input system. If you intend to use the legacy system, then you will need to update this C++ file."), *GetNameSafe(this));
 	}
 }
@@ -161,6 +166,22 @@ void AShooterSamCharacter::Shoot()
 {
 	if (gunActor) {
 		gunActor->PullTrigger();
+	}
+}
+
+void AShooterSamCharacter::Aim()
+{
+	auto CamBoom = GetCameraBoom();
+	if (gunActor && CamBoom) {
+		CamBoom->TargetArmLength = CamBoom->TargetArmLength / gunActor->AimFactor;
+	}
+}
+
+void AShooterSamCharacter::StopAim()
+{
+	auto CamBoom = GetCameraBoom();
+	if (gunActor && CamBoom) {
+		CamBoom->TargetArmLength = CamBoom->TargetArmLength * gunActor->AimFactor;
 	}
 }
 

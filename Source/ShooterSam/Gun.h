@@ -30,7 +30,8 @@ public:
 
 	UPROPERTY(EditAnywhere)
 	USkeletalMeshComponent* mesh;
-
+	UPROPERTY(EditAnywhere)
+	float AimFactor = 10.0f;
 	UPROPERTY(EditAnywhere)
 	float MaxRange = 200.0f;
 	UPROPERTY(EditAnywhere)
