@@ -6,6 +6,9 @@
 #include "Kismet/GameplayStatics.h"
 #include "BehaviorTree/BlackboardComponent.h"
 
+AShooterAI::AShooterAI() {
+	AIPerceptionComp = CreateDefaultSubobject<UAIPerceptionComponent>(TEXT("AIPerceptionComponent"));
+}
 void AShooterAI::BeginPlay()
 {
 	Super::BeginPlay();

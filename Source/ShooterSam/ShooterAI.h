@@ -5,7 +5,12 @@
 #include "CoreMinimal.h"
 #include "AIController.h"
 #include "ShooterSamCharacter.h"
+#include "Perception/AIPerceptionComponent.h"
+
+
+
 #include "ShooterAI.generated.h"
+
 
 /**
  * 
@@ -14,10 +19,13 @@ UCLASS()
 class SHOOTERSAM_API AShooterAI : public AAIController
 {
 	GENERATED_BODY()
-
+public:
+	AShooterAI();
 protected:
+	
 	virtual void BeginPlay() override;
 public:
+	
 	virtual void Tick(float DeltaTime) override;
 	
 	UPROPERTY(EditAnywhere)
@@ -26,6 +34,9 @@ public:
 	AShooterSamCharacter* MainShooterCharacter;
 	
 	AShooterSamCharacter* ControlledCharacter;
+
+	UPROPERTY(EditAnywhere)
+	UAIPerceptionComponent* AIPerceptionComp;
 
 	void StartBehaviorTree(AShooterSamCharacter* Character);
 
