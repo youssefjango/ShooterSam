@@ -6,6 +6,8 @@
 #include "GameFramework/Character.h"
 #include "Logging/LogMacros.h"
 #include "Gun.h"
+#include "ShooterSamGameMode.h"
+
 #include "ShooterSamCharacter.generated.h"
 
 class USpringArmComponent;
@@ -113,7 +115,25 @@ public:
 	UPROPERTY(BlueprintReadOnly)
 	bool IsAlive = true;
 	
+	UPROPERTY(EditAnywhere, Category = "Sound Cues")
+	USoundBase* JumpSound;
+	UPROPERTY(EditAnywhere, Category = "Sound Cues")
+	USoundBase* FirstShootSound;
+	UPROPERTY(EditAnywhere, Category = "Sound Cues")
+	USoundBase* DeathSound;
+	UPROPERTY(EditAnywhere, Category = "Sound Cues")
+	USoundBase* PainSound;
+	UPROPERTY(EditAnywhere, Category = "Sound Cues")
+	USoundBase* LowHPSound;
+
+
+
+
+	AShooterSamGameMode* SSGM;
+
+
 	void Shoot();
+	void AutomaticShoot();
 	void Aim();
 	void StopAim();
 
@@ -123,5 +143,7 @@ public:
 	void UpdateHUDHealthBar();
 private:
 	float DefaultArmLength;
+	float LastPlayedTime = 0.0f;
+	USoundBase* LastPlayedSound;
 };
 

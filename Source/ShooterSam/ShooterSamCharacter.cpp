@@ -13,7 +13,9 @@
 #include "Math/UnrealMathUtility.h"
 #include "ShooterSamPlayerController.h"
 #include "ShooterSam.h"
+#include "Kismet/GameplayStatics.h"
 
+#define PLAYSOUND(soundcue) if ((!LastPlayedSound || (GetWorld()->GetTimeSeconds() - LastPlayedTime > LastPlayedSound->Duration)) && soundcue) { LastPlayedTime = GetWorld()->GetTimeSeconds(); UGameplayStatics::PlaySoundAtLocation(GetWorld(), soundcue, GetActorLocation()); LastPlayedSound = soundcue;}
 AShooterSamCharacter::AShooterSamCharacter()
 {
 	GetMesh()->HideBoneByName("weapon_r", EPhysBodyOp::PBO_None);
@@ -49,6 +51,9 @@ AShooterSamCharacter::AShooterSamCharacter()
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName);
 	FollowCamera->bUsePawnControlRotation = false;
 
+	if (AGameModeBase* GM = UGameplayStatics::GetGameMode(GetWorld())) {
+		SSGM = Cast<AShooterSamGameMode>(GM);
+	}
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
 }
@@ -154,6 +159,7 @@ void AShooterSamCharacter::DoJumpStart()
 {
 	// signal the character to jump
 	Jump();
+	PLAYSOUND(JumpSound);
 }
 
 void AShooterSamCharacter::DoJumpEnd()
@@ -163,6 +169,14 @@ void AShooterSamCharacter::DoJumpEnd()
 }
 
 void AShooterSamCharacter::Shoot()
+{
+	if (gunActor) {
+		gunActor->PullTrigger();
+	}
+	
+	PLAYSOUND(FirstShootSound);
+}
+void AShooterSamCharacter::AutomaticShoot()
 {
 	if (gunActor) {
 		gunActor->PullTrigger();
@@ -195,8 +209,17 @@ void AShooterSamCharacter::OnDamageTaken(AActor* DamagedActor, float Damage, con
 			IsAlive = false;
 			GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 			DetachFromControllerPendingDestroy();
+			PLAYSOUND(DeathSound);
+			Cast<AShooterSamGameMode>(UGameplayStatics::GetGameMode(GetWorld()))->ActorDied(this);
+		}
+		else if (Health / MaxHealth <= 0.5f) {
+			PLAYSOUND(LowHPSound);
+		}
+		else if (FMath::RandBool()) {
+			PLAYSOUND(PainSound);
 		}
 	}
+	
 
 }
 

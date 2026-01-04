@@ -20,6 +20,13 @@ public:
 	AShooterSamGameMode();
 protected:
 	virtual void BeginPlay() override;
+	
+public:
+	UPROPERTY(EditAnywhere, Category = "Game Over Respawn")
+	float GameOverDelay = 5.0f;
+	class AShooterSamCharacter* MainShooterPlayer;
+	void onGameOverTimerTimeOut();
+	void ActorDied(AActor* DeadActor);
 
 };
 

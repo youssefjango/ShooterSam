@@ -16,6 +16,8 @@ void AShooterSamGameMode::BeginPlay()
 	Super::BeginPlay();
 
 	if (AShooterSamCharacter* Player = Cast<AShooterSamCharacter>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0))){
+		MainShooterPlayer = Player;
+		
 		TArray<AActor*> Enemies;
 		UGameplayStatics::GetAllActorsOfClass(GetWorld(), AShooterAI::StaticClass(), Enemies);
 		
@@ -25,5 +27,21 @@ void AShooterSamGameMode::BeginPlay()
 				enemyShooterAI->StartBehaviorTree(Player);
 			}	
 		}
+
 	}
+	
+}
+
+void AShooterSamGameMode::ActorDied(AActor* DeadActor)
+{
+	if (DeadActor == MainShooterPlayer) {
+		FTimerHandle GameOverTimerHandle;
+		GetWorldTimerManager().SetTimer(GameOverTimerHandle, this, &AShooterSamGameMode::onGameOverTimerTimeOut, GameOverDelay, false);
+	}
+}
+
+void AShooterSamGameMode::onGameOverTimerTimeOut()
+{
+	//restarting current level to be improved in the future in efficiency.
+	UGameplayStatics::OpenLevel(GetWorld(), FName(*UGameplayStatics::GetCurrentLevelName(GetWorld())));
 }
