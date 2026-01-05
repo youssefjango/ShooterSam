@@ -223,6 +223,14 @@ void AShooterSamCharacter::OnDamageTaken(AActor* DamagedActor, float Damage, con
 
 }
 
+void AShooterSamCharacter::ActivateVictory()
+{
+	if (AShooterSamPlayerController* PC = Cast<AShooterSamPlayerController>(this->GetController())) {
+		DisableInput(PC);
+		IsMissionComplete = true;
+	}
+}
+
 void AShooterSamCharacter::UpdateHUDHealthBar()
 {
 	if (AShooterSamPlayerController* PlayerController = Cast<AShooterSamPlayerController>(GetController())) {

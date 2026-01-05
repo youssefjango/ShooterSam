@@ -126,8 +126,8 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Sound Cues")
 	USoundBase* LowHPSound;
 
-
-
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	bool IsMissionComplete = false;
 
 	AShooterSamGameMode* SSGM;
 
@@ -140,7 +140,10 @@ public:
 	UFUNCTION()
 	void OnDamageTaken(AActor* DamagedActor, float Damage, const class UDamageType* DamageType, class AController* InstigatedBy, AActor* DamageCauser);
 	
+	void ActivateVictory();
+
 	void UpdateHUDHealthBar();
+	
 private:
 	float DefaultArmLength;
 	float LastPlayedTime = 0.0f;

@@ -20,13 +20,19 @@ public:
 	AShooterSamGameMode();
 protected:
 	virtual void BeginPlay() override;
-	
+private:
+	//making sure they will never get modified accidentally
+	int NumberOfEnemiesLeft;
+	int NumberOfKilledEnemies = 0;
 public:
 	UPROPERTY(EditAnywhere, Category = "Game Over Respawn")
 	float GameOverDelay = 5.0f;
+
 	class AShooterSamCharacter* MainShooterPlayer;
 	void onGameOverTimerTimeOut();
 	void ActorDied(AActor* DeadActor);
+	int GetNumOfEnemiesLeft();
+	int GetNumOfKilledEnemies();
 
 };
 

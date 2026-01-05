@@ -4,6 +4,7 @@
 #include "ShooterSamCharacter.h"
 #include "ShooterAI.h"
 #include "Kismet/GameplayStatics.h"
+#include "Sound/AmbientSound.h"
 
 
 AShooterSamGameMode::AShooterSamGameMode()
@@ -27,7 +28,7 @@ void AShooterSamGameMode::BeginPlay()
 				enemyShooterAI->StartBehaviorTree(Player);
 			}	
 		}
-
+		NumberOfEnemiesLeft = Enemies.Num();
 	}
 	
 }
@@ -38,6 +39,25 @@ void AShooterSamGameMode::ActorDied(AActor* DeadActor)
 		FTimerHandle GameOverTimerHandle;
 		GetWorldTimerManager().SetTimer(GameOverTimerHandle, this, &AShooterSamGameMode::onGameOverTimerTimeOut, GameOverDelay, false);
 	}
+	else {
+		if (Cast<AShooterSamCharacter>(DeadActor)) {
+			NumberOfEnemiesLeft--;
+			NumberOfKilledEnemies++;
+			if (NumberOfEnemiesLeft == 0) {
+				MainShooterPlayer->ActivateVictory();
+			}
+		}
+	}
+}
+
+int AShooterSamGameMode::GetNumOfEnemiesLeft()
+{
+	return NumberOfEnemiesLeft;
+}
+
+int AShooterSamGameMode::GetNumOfKilledEnemies()
+{
+	return NumberOfKilledEnemies;
 }
 
 void AShooterSamGameMode::onGameOverTimerTimeOut()
