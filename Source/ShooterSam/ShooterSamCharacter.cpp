@@ -94,12 +94,18 @@ void AShooterSamCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInpu
 
 		// Shooting
 		EnhancedInputComponent->BindAction(ShootAction, ETriggerEvent::Started, this, &AShooterSamCharacter::Shoot);
+		EnhancedInputComponent->BindAction(ShootAction, ETriggerEvent::Completed, this, &AShooterSamCharacter::StopShoot);
 
 		//Aiming Start
 		EnhancedInputComponent->BindAction(AimAction, ETriggerEvent::Started, this, &AShooterSamCharacter::Aim);
 
 		//Aiming Release
 		EnhancedInputComponent->BindAction(AimAction, ETriggerEvent::Completed, this, &AShooterSamCharacter::StopAim);
+
+
+		//Slow-motion Ability
+		EnhancedInputComponent->BindAction(SlowMotionAction, ETriggerEvent::Started, this, &AShooterSamCharacter::StartSlowMotion);
+		EnhancedInputComponent->BindAction(SlowMotionAction, ETriggerEvent::Completed, this, &AShooterSamCharacter::EndSlowMotion);
 	}
 	else {
 		UE_LOG(LogShooterSam, Error, TEXT("'%s' Failed to find an Enhanced Input component! This template is built to use the Enhanced Input system. If you intend to use the legacy system, then you will need to update this C++ file."), *GetNameSafe(this));
@@ -171,15 +177,14 @@ void AShooterSamCharacter::DoJumpEnd()
 void AShooterSamCharacter::Shoot()
 {
 	if (gunActor) {
+		PLAYSOUND(FirstShootSound);
 		gunActor->PullTrigger();
 	}
-	
-	PLAYSOUND(FirstShootSound);
 }
-void AShooterSamCharacter::AutomaticShoot()
+void AShooterSamCharacter::StopShoot()
 {
 	if (gunActor) {
-		gunActor->PullTrigger();
+		gunActor->StopShooting();
 	}
 }
 
@@ -197,6 +202,18 @@ void AShooterSamCharacter::StopAim()
 	if (gunActor && CamBoom) {
 		CamBoom->TargetArmLength = CamBoom->TargetArmLength * gunActor->AimFactor;
 	}
+}
+
+void AShooterSamCharacter::StartSlowMotion()
+{
+	UGameplayStatics::SetGlobalTimeDilation(GetWorld(), 1.0f/SlowMotionRate);
+	CustomTimeDilation = SlowMotionRate;
+}
+
+void AShooterSamCharacter::EndSlowMotion()
+{
+	UGameplayStatics::SetGlobalTimeDilation(GetWorld(), SlowMotionRate);
+	CustomTimeDilation = 1.0f/SlowMotionRate;
 }
 
 void AShooterSamCharacter::OnDamageTaken(AActor* DamagedActor, float Damage, const UDamageType* DamageType, AController* InstigatedBy, AActor* DamageCauser)

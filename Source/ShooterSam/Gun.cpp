@@ -41,42 +41,54 @@ void AGun::Tick(float DeltaTime)
 void AGun::PullTrigger()
 {
 	if (OwnerConroller) {
-		//Activating Shooting particles and Playing Sound
-		MuzzleFlashParticleSystem->Activate(true);
-		if (ShootSound) {
-			UGameplayStatics::PlaySoundAtLocation(GetWorld(), ShootSound, MuzzleFlashParticleSystem->GetComponentLocation());
-		}
-		else {
-			UE_LOG(LogTemp, Display, TEXT("Shooting sound cue is not instantiated in the editor."));
-		}
-		FVector location;
-		FRotator rotation;
-		OwnerConroller->GetPlayerViewPoint(location, rotation);
-		FVector endLocation = location + MaxRange * rotation.Vector();
-		FHitResult hitRes;
-		FCollisionQueryParams params;
-		params.AddIgnoredActor(this);
-		params.AddIgnoredActor(GetOwner());
-		bool hasHit = GetWorld()->LineTraceSingleByChannel(hitRes, location, endLocation, ECC_GameTraceChannel2, params);
-		if (hasHit) {
-			if (ImpactParticleSystem) {
-				//Playing Sound and particles
-				UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), ImpactParticleSystem, hitRes.ImpactPoint, hitRes.ImpactPoint.Rotation());
-				if (ImpactSound) {
-					UGameplayStatics::PlaySoundAtLocation(GetWorld(), ImpactSound, hitRes.ImpactPoint);
-				}
-				else {
-					UE_LOG(LogTemp, Display, TEXT("Impact sound cue is not instantiated in the editor."));
-				}
-			}
-			else {
-				UE_LOG(LogTemp, Display, TEXT("Impact particle system is not instantiated in the editor."));
-			}
-			if (AActor* hitActor = Cast<AActor>(hitRes.GetActor())) {
-				UGameplayStatics::ApplyDamage(hitActor, BulletDamage
-					, OwnerConroller, this, UDamageType::StaticClass());
-			}
+		ShootBullet();
+		if (fireRate > 0.0f) {
+			GetWorldTimerManager().SetTimer(AutoFireTimer, this,&AGun::ShootBullet, 1.0f/fireRate, true);
 		}
 	}
+}
+
+void AGun::ShootBullet() {
+	//Activating Shooting particles and Playing Sound
+	MuzzleFlashParticleSystem->Activate(true);
+	if (ShootSound) {
+		UGameplayStatics::PlaySoundAtLocation(GetWorld(), ShootSound, MuzzleFlashParticleSystem->GetComponentLocation());
+	}
+	else {
+		UE_LOG(LogTemp, Display, TEXT("Shooting sound cue is not instantiated in the editor."));
+	}
+	FVector location;
+	FRotator rotation;
+	OwnerConroller->GetPlayerViewPoint(location, rotation);
+	FVector endLocation = location + MaxRange * rotation.Vector();
+	FHitResult hitRes;
+	FCollisionQueryParams params;
+	params.AddIgnoredActor(this);
+	params.AddIgnoredActor(GetOwner());
+	bool hasHit = GetWorld()->LineTraceSingleByChannel(hitRes, location, endLocation, ECC_GameTraceChannel2, params);
+	if (hasHit) {
+		if (ImpactParticleSystem) {
+			//Playing Sound and particles
+			UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), ImpactParticleSystem, hitRes.ImpactPoint, hitRes.ImpactPoint.Rotation());
+			if (ImpactSound) {
+				UGameplayStatics::PlaySoundAtLocation(GetWorld(), ImpactSound, hitRes.ImpactPoint);
+			}
+			else {
+				UE_LOG(LogTemp, Display, TEXT("Impact sound cue is not instantiated in the editor."));
+			}
+		}
+		else {
+			UE_LOG(LogTemp, Display, TEXT("Impact particle system is not instantiated in the editor."));
+		}
+		if (AActor* hitActor = Cast<AActor>(hitRes.GetActor())) {
+			UGameplayStatics::ApplyDamage(hitActor, BulletDamage
+				, OwnerConroller, this, UDamageType::StaticClass());
+		}
+	}
+}
+
+void AGun::StopShooting()
+{
+	GetWorldTimerManager().ClearTimer(AutoFireTimer);
 }
 

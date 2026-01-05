@@ -57,6 +57,8 @@ protected:
 
 	UPROPERTY(EditAnywhere, Category = "Input")
 	UInputAction* AimAction;
+	UPROPERTY(EditAnywhere, Category = "Input")
+	UInputAction* SlowMotionAction;
 
 public:
 
@@ -114,7 +116,8 @@ public:
 
 	UPROPERTY(BlueprintReadOnly)
 	bool IsAlive = true;
-	
+	UPROPERTY(EditAnywhere, Category = "Ability")
+	float SlowMotionRate = 1.0f;
 	UPROPERTY(EditAnywhere, Category = "Sound Cues")
 	USoundBase* JumpSound;
 	UPROPERTY(EditAnywhere, Category = "Sound Cues")
@@ -133,10 +136,11 @@ public:
 
 
 	void Shoot();
-	void AutomaticShoot();
+	void StopShoot();
 	void Aim();
 	void StopAim();
-
+	void StartSlowMotion();
+	void EndSlowMotion();
 	UFUNCTION()
 	void OnDamageTaken(AActor* DamagedActor, float Damage, const class UDamageType* DamageType, class AController* InstigatedBy, AActor* DamageCauser);
 	

@@ -36,6 +36,9 @@ public:
 	float MaxRange = 200.0f;
 	UPROPERTY(EditAnywhere)
 	float BulletDamage = 20.0f;
+
+	UPROPERTY(EditAnywhere)
+	float fireRate = -1.0f; //negative number to 0 means that it is not automatic
 	AController* OwnerConroller;
 
 	UPROPERTY(EditAnywhere, Category = "Particles Systems")
@@ -51,4 +54,8 @@ public:
 
 	void PullTrigger();
 
+	void StopShooting();
+private:
+	FTimerHandle AutoFireTimer;
+	void ShootBullet();
 };
