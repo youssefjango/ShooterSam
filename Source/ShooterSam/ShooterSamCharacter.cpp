@@ -106,6 +106,11 @@ void AShooterSamCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInpu
 		//Slow-motion Ability
 		EnhancedInputComponent->BindAction(SlowMotionAction, ETriggerEvent::Started, this, &AShooterSamCharacter::StartSlowMotion);
 		EnhancedInputComponent->BindAction(SlowMotionAction, ETriggerEvent::Completed, this, &AShooterSamCharacter::EndSlowMotion);
+
+
+		//Sprint Ability
+		EnhancedInputComponent->BindAction(RunAction, ETriggerEvent::Started, this, &AShooterSamCharacter::Running);
+		EnhancedInputComponent->BindAction(RunAction, ETriggerEvent::Completed, this, &AShooterSamCharacter::Running);
 	}
 	else {
 		UE_LOG(LogShooterSam, Error, TEXT("'%s' Failed to find an Enhanced Input component! This template is built to use the Enhanced Input system. If you intend to use the legacy system, then you will need to update this C++ file."), *GetNameSafe(this));
@@ -176,7 +181,8 @@ void AShooterSamCharacter::DoJumpEnd()
 
 void AShooterSamCharacter::Shoot()
 {
-	if (gunActor) {
+
+	if (gunActor && !IsRunning) {
 		PLAYSOUND(FirstShootSound);
 		gunActor->PullTrigger();
 	}
@@ -190,30 +196,45 @@ void AShooterSamCharacter::StopShoot()
 
 void AShooterSamCharacter::Aim()
 {
-	auto CamBoom = GetCameraBoom();
-	if (gunActor && CamBoom) {
-		CamBoom->TargetArmLength = CamBoom->TargetArmLength / gunActor->AimFactor;
+	if (!IsRunning) {
+		auto CamBoom = GetCameraBoom();
+		if (gunActor && CamBoom) {
+			CamBoom->TargetArmLength = CamBoom->TargetArmLength / gunActor->AimFactor;
+		}
 	}
 }
 
 void AShooterSamCharacter::StopAim()
 {
-	auto CamBoom = GetCameraBoom();
-	if (gunActor && CamBoom) {
-		CamBoom->TargetArmLength = CamBoom->TargetArmLength * gunActor->AimFactor;
+	if (!IsRunning) {
+		auto CamBoom = GetCameraBoom();
+		if (gunActor && CamBoom) {
+			CamBoom->TargetArmLength = CamBoom->TargetArmLength * gunActor->AimFactor;
+		}
 	}
 }
 
 void AShooterSamCharacter::StartSlowMotion()
 {
-	UGameplayStatics::SetGlobalTimeDilation(GetWorld(), 1.0f/SlowMotionRate);
-	CustomTimeDilation = SlowMotionRate;
+	if (bIsInslowMotion) {
+		return;
+	}
+	bIsInslowMotion = true;
+	UGameplayStatics::SetGlobalTimeDilation(GetWorld(), 1.0f / SlowMotionRate);
 }
 
 void AShooterSamCharacter::EndSlowMotion()
 {
-	UGameplayStatics::SetGlobalTimeDilation(GetWorld(), SlowMotionRate);
-	CustomTimeDilation = 1.0f/SlowMotionRate;
+	bIsInslowMotion = false;
+	UGameplayStatics::SetGlobalTimeDilation(GetWorld(), 1.0f);
+}
+
+void AShooterSamCharacter::Running()
+{
+	float temp = GetCharacterMovement()->MaxWalkSpeed;
+	GetCharacterMovement()->MaxWalkSpeed = RunningSpeed;
+	RunningSpeed = temp;
+	IsRunning = !IsRunning;
 }
 
 void AShooterSamCharacter::OnDamageTaken(AActor* DamagedActor, float Damage, const UDamageType* DamageType, AController* InstigatedBy, AActor* DamageCauser)
@@ -244,6 +265,7 @@ void AShooterSamCharacter::ActivateVictory()
 {
 	if (AShooterSamPlayerController* PC = Cast<AShooterSamPlayerController>(this->GetController())) {
 		DisableInput(PC);
+		StopShoot();
 		IsMissionComplete = true;
 	}
 }

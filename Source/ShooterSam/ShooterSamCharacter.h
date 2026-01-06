@@ -60,6 +60,9 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Input")
 	UInputAction* SlowMotionAction;
 
+	UPROPERTY(EditAnywhere, Category = "Input")
+	UInputAction* RunAction;
+
 public:
 
 	/** Constructor */
@@ -131,9 +134,12 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	bool IsMissionComplete = false;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	bool IsRunning = false;
 
 	AShooterSamGameMode* SSGM;
-
+	UPROPERTY(EditAnywhere)
+	float RunningSpeed;
 
 	void Shoot();
 	void StopShoot();
@@ -141,6 +147,7 @@ public:
 	void StopAim();
 	void StartSlowMotion();
 	void EndSlowMotion();
+	void Running();
 	UFUNCTION()
 	void OnDamageTaken(AActor* DamagedActor, float Damage, const class UDamageType* DamageType, class AController* InstigatedBy, AActor* DamageCauser);
 	
@@ -149,6 +156,7 @@ public:
 	void UpdateHUDHealthBar();
 	
 private:
+	bool bIsInslowMotion = false;
 	float DefaultArmLength;
 	float LastPlayedTime = 0.0f;
 	USoundBase* LastPlayedSound;

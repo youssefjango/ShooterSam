@@ -17,6 +17,7 @@ EBTNodeResult::Type UBTTaskNodeShootPlayer::ExecuteTask(UBehaviorTreeComponent& 
 			&& AIController->ControlledCharacter 
 			&& AIController->MainShooterCharacter->IsAlive) {
 			AIController->ControlledCharacter->Shoot();
+			AIController->ControlledCharacter->StopShoot();
 			return EBTNodeResult::Succeeded;
 		}
 	}
