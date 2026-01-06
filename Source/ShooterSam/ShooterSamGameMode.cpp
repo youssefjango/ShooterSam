@@ -43,6 +43,7 @@ void AShooterSamGameMode::ActorDied(AActor* DeadActor)
 		if (Cast<AShooterSamCharacter>(DeadActor)) {
 			NumberOfEnemiesLeft--;
 			NumberOfKilledEnemies++;
+			MainShooterPlayer->UpdateHUDEnemiesKilled(NumberOfKilledEnemies);
 			if (NumberOfEnemiesLeft == 0) {
 				MainShooterPlayer->ActivateVictory();
 			}

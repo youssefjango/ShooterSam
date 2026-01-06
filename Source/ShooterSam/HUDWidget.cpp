@@ -9,3 +9,10 @@ void UHUDWidget::setHealthBar(float percent)
 		HealthBar->SetPercent(percent);
 	}
 }
+
+void UHUDWidget::setEnemiesKilled(int enemies)
+{
+	if (enemies >= 0) {
+		TB_EnemiesKilled->SetText(FText::AsNumber(enemies));
+	}
+}

@@ -248,7 +248,9 @@ void AShooterSamCharacter::OnDamageTaken(AActor* DamagedActor, float Damage, con
 			GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 			DetachFromControllerPendingDestroy();
 			PLAYSOUND(DeathSound);
-			Cast<AShooterSamGameMode>(UGameplayStatics::GetGameMode(GetWorld()))->ActorDied(this);
+			if (SSGM) {
+				SSGM->ActorDied(this);
+			}
 		}
 		else if (Health / MaxHealth <= 0.5f) {
 			PLAYSOUND(LowHPSound);
@@ -274,5 +276,12 @@ void AShooterSamCharacter::UpdateHUDHealthBar()
 {
 	if (AShooterSamPlayerController* PlayerController = Cast<AShooterSamPlayerController>(GetController())) {
 		PlayerController->HUDWidget->setHealthBar(FMath::Clamp((Health / MaxHealth), 0.0f, 1.0f));
+	}
+}
+
+void AShooterSamCharacter::UpdateHUDEnemiesKilled(int enemiesLeft)
+{
+	if (AShooterSamPlayerController* PlayerController = Cast<AShooterSamPlayerController>(GetController())) {
+		PlayerController->HUDWidget->setEnemiesKilled(enemiesLeft);
 	}
 }

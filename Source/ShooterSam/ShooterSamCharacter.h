@@ -154,6 +154,8 @@ public:
 	void ActivateVictory();
 
 	void UpdateHUDHealthBar();
+
+	void UpdateHUDEnemiesKilled(int enemiesLeft);
 	
 private:
 	bool bIsInslowMotion = false;
