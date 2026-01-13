@@ -35,7 +35,7 @@ AShooterSamCharacter::AShooterSamCharacter()
 	// instead of recompiling to adjust them
 	GetCharacterMovement()->JumpZVelocity = 500.f;
 	GetCharacterMovement()->AirControl = 0.35f;
-	GetCharacterMovement()->MaxWalkSpeed = 500.f;
+	GetCharacterMovement()->MaxWalkSpeed = WalkingSpeed;
 	GetCharacterMovement()->MinAnalogWalkSpeed = 20.f;
 	GetCharacterMovement()->BrakingDecelerationWalking = 2000.f;
 	GetCharacterMovement()->BrakingDecelerationFalling = 1500.0f;
@@ -56,6 +56,13 @@ AShooterSamCharacter::AShooterSamCharacter()
 	}
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
+	
+
+	//NightVision Post Processing Volume
+	PPV_SlowmoVision = CreateDefaultSubobject<UPostProcessComponent>(TEXT("PostProcessSlowmoVision"));
+	PPV_SlowmoVision->SetupAttachment(GetRootComponent());
+	PPV_SlowmoVision->bUnbound = false;  //only inside shape         
+	PPV_SlowmoVision->BlendWeight = 0.f; //disable         
 }
 
 void AShooterSamCharacter::BeginPlay()
@@ -65,6 +72,10 @@ void AShooterSamCharacter::BeginPlay()
 	OnTakeAnyDamage.AddDynamic(this, &AShooterSamCharacter::OnDamageTaken);
 	Health = MaxHealth;
 	UpdateHUDHealthBar();
+
+	for (int32 i = 0; i < GetMesh()->GetNumMaterials(); i++) {
+		meshMaterials.Add(GetMesh()->GetMaterial(i));
+	}
 
 	gunActor = GetWorld()->SpawnActor<AGun>(GunClass);
 	if (gunActor) {
@@ -109,8 +120,8 @@ void AShooterSamCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInpu
 
 
 		//Sprint Ability
-		EnhancedInputComponent->BindAction(RunAction, ETriggerEvent::Started, this, &AShooterSamCharacter::Running);
-		EnhancedInputComponent->BindAction(RunAction, ETriggerEvent::Completed, this, &AShooterSamCharacter::Running);
+		EnhancedInputComponent->BindAction(RunAction, ETriggerEvent::Started, this, &AShooterSamCharacter::StartSprint);
+		EnhancedInputComponent->BindAction(RunAction, ETriggerEvent::Completed, this, &AShooterSamCharacter::StopSprint);
 	}
 	else {
 		UE_LOG(LogShooterSam, Error, TEXT("'%s' Failed to find an Enhanced Input component! This template is built to use the Enhanced Input system. If you intend to use the legacy system, then you will need to update this C++ file."), *GetNameSafe(this));
@@ -182,7 +193,10 @@ void AShooterSamCharacter::DoJumpEnd()
 void AShooterSamCharacter::Shoot()
 {
 
-	if (gunActor && !IsRunning) {
+	if (gunActor) {
+		if (IsRunning) {
+			StopSprint();
+		}
 		PLAYSOUND(FirstShootSound);
 		gunActor->PullTrigger();
 	}
@@ -220,21 +234,39 @@ void AShooterSamCharacter::StartSlowMotion()
 		return;
 	}
 	bIsInslowMotion = true;
+	//What is commented in this function is correct, but I feel like it is too overpowered than just classic slow motion ability
+	//auto MoveComp = GetCharacterMovement();
+	//MoveComp->StopMovementImmediately();
+	//MoveComp->DisableMovement();
 	UGameplayStatics::SetGlobalTimeDilation(GetWorld(), 1.0f / SlowMotionRate);
+	//CustomTimeDilation = SlowMotionRate;
+	//MoveComp->SetMovementMode(MOVE_Walking);
+
+	PPV_SlowmoVision->BlendWeight = 1.0;
+	PPV_SlowmoVision->bUnbound = true;
+	SSGM->HighlightEnemies(M_Hightlight);
 }
 
 void AShooterSamCharacter::EndSlowMotion()
 {
 	bIsInslowMotion = false;
 	UGameplayStatics::SetGlobalTimeDilation(GetWorld(), 1.0f);
+	//CustomTimeDilation = 1.0f;
+	PPV_SlowmoVision->BlendWeight = 0.f;
+	PPV_SlowmoVision->bUnbound = false;
+	SSGM->UnhighlightEnemies();
+
 }
 
-void AShooterSamCharacter::Running()
+void AShooterSamCharacter::StartSprint()
 {
-	float temp = GetCharacterMovement()->MaxWalkSpeed;
-	GetCharacterMovement()->MaxWalkSpeed = RunningSpeed;
-	RunningSpeed = temp;
-	IsRunning = !IsRunning;
+	GetCharacterMovement()->MaxWalkSpeed = SprintingSpeed;
+	IsRunning = true;
+}
+void AShooterSamCharacter::StopSprint()
+{
+	GetCharacterMovement()->MaxWalkSpeed = WalkingSpeed;
+	IsRunning = false;
 }
 
 void AShooterSamCharacter::OnDamageTaken(AActor* DamagedActor, float Damage, const UDamageType* DamageType, AController* InstigatedBy, AActor* DamageCauser)

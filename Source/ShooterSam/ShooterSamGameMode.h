@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"
+
 #include "ShooterSamGameMode.generated.h"
 
 /**
@@ -24,6 +25,7 @@ private:
 	//making sure they will never get modified accidentally
 	int NumberOfEnemiesLeft;
 	int NumberOfKilledEnemies = 0;
+	TArray<AActor*> Enemies;
 public:
 	UPROPERTY(EditAnywhere, Category = "Game Over Respawn")
 	float GameOverDelay = 5.0f;
@@ -33,6 +35,9 @@ public:
 	void ActorDied(AActor* DeadActor);
 	int GetNumOfEnemiesLeft();
 	int GetNumOfKilledEnemies();
+	void HighlightEnemies(UMaterialInterface* HighlightMaterial);
+
+	void UnhighlightEnemies();
 
 };
 

@@ -7,8 +7,12 @@
 #include "Logging/LogMacros.h"
 #include "Gun.h"
 #include "ShooterSamGameMode.h"
+#include "Components/PostProcessComponent.h"
+
 
 #include "ShooterSamCharacter.generated.h"
+
+
 
 class USpringArmComponent;
 class UCameraComponent;
@@ -139,15 +143,25 @@ public:
 
 	AShooterSamGameMode* SSGM;
 	UPROPERTY(EditAnywhere)
-	float RunningSpeed;
+	float SprintingSpeed;
+	UPROPERTY(EditAnywhere)
+	float WalkingSpeed = 500.0f;
+	//Postproccess volume for slowmotion
+	UPROPERTY(EditAnywhere)
+	UPostProcessComponent* PPV_SlowmoVision;
 
+	//Highlight material
+	UPROPERTY(EditAnywhere)
+	UMaterialInterface* M_Hightlight;
+	TArray<UMaterialInterface*> meshMaterials;
 	void Shoot();
 	void StopShoot();
 	void Aim();
 	void StopAim();
 	void StartSlowMotion();
 	void EndSlowMotion();
-	void Running();
+	void StartSprint();
+	void StopSprint();
 	UFUNCTION()
 	void OnDamageTaken(AActor* DamagedActor, float Damage, const class UDamageType* DamageType, class AController* InstigatedBy, AActor* DamageCauser);
 	

@@ -19,7 +19,7 @@ void AShooterSamGameMode::BeginPlay()
 	if (AShooterSamCharacter* Player = Cast<AShooterSamCharacter>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0))){
 		MainShooterPlayer = Player;
 		
-		TArray<AActor*> Enemies;
+		
 		UGameplayStatics::GetAllActorsOfClass(GetWorld(), AShooterAI::StaticClass(), Enemies);
 		
 		for (AActor* enemy : Enemies)
@@ -59,6 +59,38 @@ int AShooterSamGameMode::GetNumOfEnemiesLeft()
 int AShooterSamGameMode::GetNumOfKilledEnemies()
 {
 	return NumberOfKilledEnemies;
+}
+
+void AShooterSamGameMode::HighlightEnemies(UMaterialInterface* HighlightMaterial)
+{
+	if (Enemies.Num() > 0) {
+		for (AActor* enemy : Enemies) {
+			if (AShooterAI* enemyShooterAI = Cast<AShooterAI>(enemy)) {
+				if (AShooterSamCharacter* shooter = Cast<AShooterSamCharacter>(enemyShooterAI->GetPawn())) {
+					for (int32 i = 0; i < shooter->GetMesh()->GetNumMaterials(); i++)
+					{
+						shooter->meshMaterials[i] = shooter->GetMesh()->GetMaterial(i);
+						shooter->GetMesh()->SetMaterial(i, HighlightMaterial);
+					}
+				}
+			}
+		}
+	}
+}
+void AShooterSamGameMode::UnhighlightEnemies()
+{
+	if (Enemies.Num() > 0) {
+		for (AActor* enemy : Enemies) {
+			if (AShooterAI* enemyShooterAI = Cast<AShooterAI>(enemy)) {
+				if (AShooterSamCharacter* shooter = Cast<AShooterSamCharacter>(enemyShooterAI->GetPawn())) {
+					for (int32 i = 0; i < shooter->GetMesh()->GetNumMaterials(); i++)
+					{
+						shooter->GetMesh()->SetMaterial(i, shooter->meshMaterials[i]);
+					}
+				}
+			}
+		}
+	}
 }
 
 void AShooterSamGameMode::onGameOverTimerTimeOut()
