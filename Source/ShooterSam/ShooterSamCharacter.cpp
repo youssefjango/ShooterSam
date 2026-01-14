@@ -214,6 +214,7 @@ void AShooterSamCharacter::Aim()
 		auto CamBoom = GetCameraBoom();
 		if (gunActor && CamBoom) {
 			CamBoom->TargetArmLength = CamBoom->TargetArmLength / gunActor->AimFactor;
+			bIsAiming = true;
 		}
 	}
 }
@@ -224,6 +225,7 @@ void AShooterSamCharacter::StopAim()
 		auto CamBoom = GetCameraBoom();
 		if (gunActor && CamBoom) {
 			CamBoom->TargetArmLength = CamBoom->TargetArmLength * gunActor->AimFactor;
+			bIsAiming = false;
 		}
 	}
 }

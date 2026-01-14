@@ -149,7 +149,8 @@ public:
 	//Postproccess volume for slowmotion
 	UPROPERTY(EditAnywhere)
 	UPostProcessComponent* PPV_SlowmoVision;
-
+	UPROPERTY(EditAnywhere)
+	float SlowMotionEffectSpeed = 5.0f;
 	//Highlight material
 	UPROPERTY(EditAnywhere)
 	UMaterialInterface* M_Hightlight;
@@ -159,6 +160,7 @@ public:
 	void Aim();
 	void StopAim();
 	void StartSlowMotion();
+	void ProcessSlowMotionEffect();
 	void EndSlowMotion();
 	void StartSprint();
 	void StopSprint();
@@ -173,8 +175,10 @@ public:
 	
 private:
 	bool bIsInslowMotion = false;
+	bool bIsAiming = false;
 	float DefaultArmLength;
 	float LastPlayedTime = 0.0f;
 	USoundBase* LastPlayedSound;
+	FTimerHandle SlowMotionEffectTimer;
 };
 
