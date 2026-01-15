@@ -93,6 +93,11 @@ void AShooterSamGameMode::UnhighlightEnemies()
 	}
 }
 
+void AShooterSamGameMode::AddEnemy(AShooterSamCharacter* Enemy)
+{
+	Enemies.Add(Enemy);
+}
+
 void AShooterSamGameMode::onGameOverTimerTimeOut()
 {
 	//restarting current level to be improved in the future in efficiency.

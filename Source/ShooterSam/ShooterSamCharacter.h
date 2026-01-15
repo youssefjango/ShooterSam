@@ -160,7 +160,6 @@ public:
 	void Aim();
 	void StopAim();
 	void StartSlowMotion();
-	void ProcessSlowMotionEffect();
 	void EndSlowMotion();
 	void StartSprint();
 	void StopSprint();

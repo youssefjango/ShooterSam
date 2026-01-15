@@ -38,6 +38,7 @@ public:
 	void HighlightEnemies(UMaterialInterface* HighlightMaterial);
 
 	void UnhighlightEnemies();
+	void AddEnemy(AShooterSamCharacter* Enemy);
 
 };
 
