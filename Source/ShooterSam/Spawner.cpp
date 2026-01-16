@@ -35,7 +35,7 @@ void ASpawner::OnSpawn() {
 
 	if (UKismetMathLibrary::RandomBoolWithWeight(SpawningProbability)) {
 		UE_LOG(LogTemp, Display, TEXT("Spawning"));
-		AShooterSamCharacter* Enemy = GetWorld()->SpawnActor<AShooterSamCharacter>(SpawnerShooterClass);
+		AShooterSamCharacter* Enemy = GetWorld()->SpawnActor<AShooterSamCharacter>(SpawnerShooterClass,GetTransform());
 		SSGM->AddEnemy(Enemy);
 	}
 }

@@ -38,17 +38,17 @@ void AGun::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
-void AGun::PullTrigger()
+void AGun::PullTrigger(bool IsAiming)
 {
 	if (OwnerConroller) {
-		ShootBullet();
+		ShootBullet(IsAiming);
 		if (fireRate > 0.0f) {
 			GetWorldTimerManager().SetTimer(AutoFireTimer, this,&AGun::ShootBullet, 1.0f/fireRate, true);
 		}
 	}
 }
 
-void AGun::ShootBullet() {
+void AGun::ShootBullet(bool isAiming) {
 	//Activating Shooting particles and Playing Sound
 	MuzzleFlashParticleSystem->Activate(true);
 	if (ShootSound) {

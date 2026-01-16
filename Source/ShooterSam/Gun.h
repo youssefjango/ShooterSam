@@ -52,10 +52,10 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Sound Cues")
 	USoundBase* ImpactSound;
 
-	void PullTrigger();
+	void PullTrigger(bool IsAiming);
 
 	void StopShooting();
 private:
 	FTimerHandle AutoFireTimer;
-	void ShootBullet();
+	void ShootBullet(bool IsAiming);
 };
