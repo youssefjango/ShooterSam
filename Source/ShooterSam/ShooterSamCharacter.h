@@ -124,7 +124,7 @@ public:
 	UPROPERTY(BlueprintReadOnly)
 	bool IsAlive = true;
 	UPROPERTY(EditAnywhere, Category = "Ability")
-	float SlowMotionRate = 1.0f;
+	float SlowMotionRate = 100.0f;
 	UPROPERTY(EditAnywhere, Category = "Sound Cues")
 	USoundBase* JumpSound;
 	UPROPERTY(EditAnywhere, Category = "Sound Cues")
@@ -171,6 +171,8 @@ public:
 	void UpdateHUDHealthBar();
 
 	void UpdateHUDEnemiesKilled(int enemiesLeft);
+	//this function ensures we do not change in other places IsAiming property.
+	bool GetbIsAiming(); 
 	
 private:
 	bool bIsInslowMotion = false;

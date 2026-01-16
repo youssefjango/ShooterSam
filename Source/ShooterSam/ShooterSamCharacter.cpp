@@ -61,7 +61,7 @@ AShooterSamCharacter::AShooterSamCharacter()
 	//NightVision Post Processing Volume
 	PPV_SlowmoVision = CreateDefaultSubobject<UPostProcessComponent>(TEXT("PostProcessSlowmoVision"));
 	PPV_SlowmoVision->SetupAttachment(GetRootComponent());
-	PPV_SlowmoVision->bUnbound = false;  //only inside shape         
+	PPV_SlowmoVision->bUnbound = false;      
 	PPV_SlowmoVision->BlendWeight = 0.f; //disable         
 }
 
@@ -233,16 +233,11 @@ void AShooterSamCharacter::StopAim()
 void AShooterSamCharacter::StartSlowMotion()
 {
 	if (bIsInslowMotion) {
+		UE_LOG(LogTemp, Display, TEXT("Cancel"));
 		return;
 	}
 	bIsInslowMotion = true;
-	//What is commented in this function is correct, but I feel like it is too overpowered than just classic slow motion ability
-	//auto MoveComp = GetCharacterMovement();
-	//MoveComp->StopMovementImmediately();
-	//MoveComp->DisableMovement();
 	UGameplayStatics::SetGlobalTimeDilation(GetWorld(), 1.0f / SlowMotionRate);
-	//CustomTimeDilation = SlowMotionRate;
-	//MoveComp->SetMovementMode(MOVE_Walking);
 
 	PPV_SlowmoVision->BlendWeight = 1.0;
 	PPV_SlowmoVision->bUnbound = true;
@@ -318,4 +313,9 @@ void AShooterSamCharacter::UpdateHUDEnemiesKilled(int enemiesLeft)
 	if (AShooterSamPlayerController* PlayerController = Cast<AShooterSamPlayerController>(GetController())) {
 		PlayerController->HUDWidget->setEnemiesKilled(enemiesLeft);
 	}
+}
+
+bool AShooterSamCharacter::GetbIsAiming()
+{
+	return bIsAiming;
 }

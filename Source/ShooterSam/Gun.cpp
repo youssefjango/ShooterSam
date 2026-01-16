@@ -3,6 +3,7 @@
 
 #include "Gun.h"
 #include "Kismet/GameplayStatics.h"
+#include "ShooterSamCharacter.h"
 
 #define LOG_WARNING(x) UE_LOG(LogTemp, Warning, TEXT(x))
 
@@ -38,17 +39,17 @@ void AGun::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
-void AGun::PullTrigger(bool IsAiming)
+void AGun::PullTrigger()
 {
 	if (OwnerConroller) {
-		ShootBullet(IsAiming);
+		ShootBullet();
 		if (fireRate > 0.0f) {
 			GetWorldTimerManager().SetTimer(AutoFireTimer, this,&AGun::ShootBullet, 1.0f/fireRate, true);
 		}
 	}
 }
 
-void AGun::ShootBullet(bool isAiming) {
+void AGun::ShootBullet() {
 	//Activating Shooting particles and Playing Sound
 	MuzzleFlashParticleSystem->Activate(true);
 	if (ShootSound) {
@@ -60,7 +61,13 @@ void AGun::ShootBullet(bool isAiming) {
 	FVector location;
 	FRotator rotation;
 	OwnerConroller->GetPlayerViewPoint(location, rotation);
-	FVector endLocation = location + MaxRange * rotation.Vector();
+	auto V = rotation.Vector();
+	if (auto OwnerCharacter = Cast<AShooterSamCharacter>(GetOwner())) {
+		V.X = OwnerCharacter->GetbIsAiming() ? V.X : V.X + FMath::RandRange(- BloomAmount.X, BloomAmount.X);
+		V.Y = OwnerCharacter->GetbIsAiming() ? V.Y : V.Y + FMath::RandRange(- BloomAmount.Y, BloomAmount.Y);
+		V.Z = OwnerCharacter->GetbIsAiming() ? V.Z : V.Z + FMath::RandRange(- BloomAmount.Z, BloomAmount.Z);
+	}
+	FVector endLocation = location + MaxRange * V;
 	FHitResult hitRes;
 	FCollisionQueryParams params;
 	params.AddIgnoredActor(this);

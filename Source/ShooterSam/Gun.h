@@ -51,11 +51,13 @@ public:
 	USoundBase* ShootSound;
 	UPROPERTY(EditAnywhere, Category = "Sound Cues")
 	USoundBase* ImpactSound;
+	UPROPERTY(EditAnywhere)
+	FVector BloomAmount;
 
-	void PullTrigger(bool IsAiming);
+	void PullTrigger();
 
 	void StopShooting();
 private:
 	FTimerHandle AutoFireTimer;
-	void ShootBullet(bool IsAiming);
+	void ShootBullet();
 };
