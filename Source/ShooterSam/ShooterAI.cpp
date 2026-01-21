@@ -8,6 +8,21 @@
 
 AShooterAI::AShooterAI() {
 	AIPerceptionComp = CreateDefaultSubobject<UAIPerceptionComponent>(TEXT("AIPerceptionComponent"));
+
+	SightConfig = CreateDefaultSubobject<UAISenseConfig_Sight>(TEXT("SightConfig"));
+
+	SightConfig->SightRadius = 2500.f;
+	SightConfig->LoseSightRadius = 3000.f;
+	SightConfig->PeripheralVisionAngleDegrees = 90.f;
+	SightConfig->SetMaxAge(3.0f);
+	SightConfig->AutoSuccessRangeFromLastSeenLocation = 520.f;
+
+	SightConfig->DetectionByAffiliation.bDetectEnemies = true;
+	SightConfig->DetectionByAffiliation.bDetectFriendlies = true;
+	SightConfig->DetectionByAffiliation.bDetectNeutrals = true;
+
+	AIPerceptionComp->ConfigureSense(*SightConfig);
+	AIPerceptionComp->SetDominantSense(UAISense_Sight::StaticClass());
 }
 void AShooterAI::BeginPlay()
 {

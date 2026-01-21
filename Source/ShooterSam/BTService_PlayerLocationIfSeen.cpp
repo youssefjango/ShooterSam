@@ -3,6 +3,8 @@
 
 #include "BTService_PlayerLocationIfSeen.h"
 #include "BehaviorTree/BlackboardComponent.h"
+#include "Perception/AISense_Sight.h"
+
 
 #include <ShooterAI.h>
 
@@ -19,7 +21,28 @@ void UBTService_PlayerLocationIfSeen::TickNode(UBehaviorTreeComponent& OwnerComp
 		AShooterSamCharacter* Player = OwnerController->MainShooterCharacter;
 		UBlackboardComponent* BB = OwnerController->GetBlackboardComponent();
 		if (Player && BB) {
-			if (OwnerController->LineOfSightTo(Player)) {
+			// Get the perception component from the ai controller
+			auto* perceptionComponent = Cast<UAIPerceptionComponent>(OwnerController->GetAIPerceptionComponent());
+			if (!IsValid(perceptionComponent))
+			{
+				return;
+			}
+
+			// Check all the perception stimuli of the actor (sight, hearing, etc)
+			FActorPerceptionBlueprintInfo Info;
+			perceptionComponent->GetActorsPerception(Player, Info);
+
+			// loop through the list of stimuli until it gets to the sight type and check if its succesfully "sensed" (ie successfully in sight)
+			bool isSeen = false;
+			for (const FAIStimulus& stimulus : Info.LastSensedStimuli)
+			{
+				if (stimulus.Type == UAISense::GetSenseID(UAISense_Sight::StaticClass()))
+				{
+					isSeen = stimulus.WasSuccessfullySensed();
+					break;
+				}
+			}
+			if (isSeen) {
 				OwnerController->SetFocus(Player, EAIFocusPriority::Gameplay);
 				BB->SetValueAsVector(GetSelectedBlackboardKey(), Player->GetActorLocation());
 			}

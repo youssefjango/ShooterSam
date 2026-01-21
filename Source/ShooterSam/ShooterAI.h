@@ -6,10 +6,11 @@
 #include "AIController.h"
 #include "ShooterSamCharacter.h"
 #include "Perception/AIPerceptionComponent.h"
-
+#include "Perception/AISenseConfig_Sight.h"
 
 
 #include "ShooterAI.generated.h"
+
 
 
 /**
@@ -37,6 +38,8 @@ public:
 
 	UPROPERTY(EditAnywhere)
 	UAIPerceptionComponent* AIPerceptionComp;
+	UPROPERTY(EditAnywhere)
+	UAISenseConfig_Sight* SightConfig;
 
 	void StartBehaviorTree(AShooterSamCharacter* Character);
 
